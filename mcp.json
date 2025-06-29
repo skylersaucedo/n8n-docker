@@ -2,17 +2,6 @@
   "name": "mcp",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -300,
-        -80
-      ],
-      "id": "58f7c9ae-df52-42eb-91d8-109730c8efe1",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
       "parameters": {
         "assignments": {
           "assignments": [
@@ -38,7 +27,8 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "You are a helpful assistant. You should help the user by utilizing your available tools."
+          "systemMessage": "=You are an expert Asset Manager, tasked with extracting detailed equipment information from construction/heavy machinery websites to do market value comparisons, using available tools.\n\nUse the Firecrawl tools to gather the following data:\n\nitem_description, year, hours, serial_number, dealer, seller_location, phone, price, lot_number, url_to_listing. This data must be current as of June 2025.\n\nIF THE WORD \"AUCTION\" SHOWS UP, DO NOT INCLUDE ITEM IN THE OUTPUT. NO AUCTION VALUES ARE VALID!!\nDO NOT INCLUDE ITEMS THAT SAY \"CALL FOR PRICE\". IF THERE IS NO PRICE, DO NOT INCLDE ITEM. \n\nONLY RETURN A LIST OF JSONS FOR ALL ITEMS.\n\nExample:\n\n[\n  {\n    \"item_description\": \"2021 CATERPILLAR 320GC Crawler Excavators\",\n    \"year\": \"2021\",\n    \"hours\": \"3098\",\n    \"serial_number\": \"CAT00320JLKS10364\",\n    \"dealer\": \"\",\n    \"seller_location\": \"Conover, North Carolina 28613\",\n    \"location\": \"Conover, North Carolina 28613\",\n    \"phone\": \"\",\n    \"price\": \"\",\n    \"lot_number\": \"2140\",\n    \"url_to_listing\": \"https://www.equipmentfacts.com/listings/construction-equipment/auctions/online/245011465?gtmlt=1\"\n  },\n  {\n    \"item_description\": \"2018 CATERPILLAR 320GC Crawler Excavators\",\n    \"year\": \"2018\",\n    \"hours\": \"1,160\",\n    \"serial_number\": \"CAT00320KKTN00420\",\n    \"dealer\": \"Horizon Machinery Company\",\n    \"seller_location\": \"Elgin, South Carolina 29045\",\n    \"location\": \"Elgin, South Carolina 29045\",\n    \"phone\": \"(803) 398-1788\",\n    \"price\": \"USD $147,900\",\n    \"lot_number\": \"\",\n    \"url_to_listing\": \"https://www.machinerytrader.com/listing/for-sale/244828435/2018-caterpillar-320gc-crawler-excavators\"\n  },\n]\n\nIf there are no items found, or if all results yield \"AUCTION\" or \"CALL FOR PRICE\", return empty strings for all fields. \n\nNow, use firecrawl_search to find the items, and use firecrawl_scrape to gather the data for: \n\n{{ $('When chat message received').item.json.chatInput }}",
+          "maxIterations": 4
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -146,11 +136,6 @@
   ],
   "pinData": {},
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        []
-      ]
-    },
     "Edit Fields": {
       "main": [
         []
@@ -210,7 +195,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "da94012b-0dbc-40e5-95a1-cd42a92625bf",
+  "versionId": "418ac75b-78a1-45c7-9ee9-0e6a6e08a180",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b53e5eae32c5424292e1526b1fbd2fbbaedf996eb445f2f736a2a7c0ec6fa171"

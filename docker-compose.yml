@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: n8n_postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=n8n
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=n8n_secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U n8n"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      # Database configuration
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8n_secure_password
+      - DB_POSTGRESDB_SCHEMA=public
+      
+      # Basic configuration
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      
+      # Timezone settings
+      - GENERIC_TIMEZONE=America/Chicago
+      - TZ=America/Chicago
+      
+      # Security settings (IMPORTANT: Change this encryption key!)
+      - N8N_ENCRYPTION_KEY=your-very-secure-encryption-key-change-this
+      
+      # Webhook settings
+      - WEBHOOK_URL=http://localhost:5678/
+      
+      # MCP Client Configuration - REQUIRED for MCP functionality
+      - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true
+      
+      # MCP Server Environment Variables (add your API keys here)
+      # Uncomment and configure the ones you need:
+      # - MCP_BRAVE_API_KEY=your-brave-api-key-here
+      # - MCP_OPENAI_API_KEY=your-openai-api-key-here
+      # - MCP_SERPER_API_KEY=your-serper-api-key-here
+      # - MCP_WEATHER_API_KEY=your-weather-api-key-here
+      # - MCP_CUSTOM_SETTING=your-custom-value-here
+      
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  n8n_data:
+  postgres_data:

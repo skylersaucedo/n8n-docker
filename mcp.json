@@ -1,0 +1,220 @@
+{
+  "name": "mcp",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        -80
+      ],
+      "id": "58f7c9ae-df52-42eb-91d8-109730c8efe1",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc94b894-d29b-4dd9-836d-cfc93d9ed213",
+              "name": "={{ $env['ENV'] }}",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        320
+      ],
+      "id": "e90f0a85-f5d3-4322-9d4b-6cda66a0ec53",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant. You should help the user by utilizing your available tools."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "cca4de34-aa5c-4a3a-a6b5-81cabc5deb17",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        280,
+        280
+      ],
+      "id": "b3770873-6942-45f5-8cd5-77810d871292",
+      "name": "Claude 4",
+      "credentials": {
+        "anthropicApi": {
+          "id": "EErYq5Ih6jG1D2bh",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ],
+      "id": "79fbbf6b-849d-408c-a25e-141bc0bfa41d",
+      "name": "Firecrawl Tools",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "eaL7EesvLNwwNKZt",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClient",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        120
+      ],
+      "id": "70751a28-0485-44dd-b682-09cc53a0cb99",
+      "name": "Firecrawl tools",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "eaL7EesvLNwwNKZt",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{ $fromAI(\"firecrawl_tool_name\", \"call this tool when you need firecrawl's scraper tool names. \", \"string\") }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        740,
+        440
+      ],
+      "id": "929360bd-3f81-48e6-8b42-973dca88afa9",
+      "name": "MCP Client",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "eaL7EesvLNwwNKZt",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        180,
+        -20
+      ],
+      "id": "6785d442-78d0-4c00-8218-c82f8d63692d",
+      "name": "When chat message received",
+      "webhookId": "d63e28a0-1779-40b2-93a1-bea3a4d40968"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Claude 4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firecrawl Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firecrawl tools": {
+      "main": [
+        []
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "da94012b-0dbc-40e5-95a1-cd42a92625bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b53e5eae32c5424292e1526b1fbd2fbbaedf996eb445f2f736a2a7c0ec6fa171"
+  },
+  "id": "RR8ubXZuJNRBZoQH",
+  "tags": []
+}
